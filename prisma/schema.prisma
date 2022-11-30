@@ -1,0 +1,62 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                Int           @id @default(autoincrement())
+  wallet_addr       String        @unique @db.Char(42)
+  total_spent       Int           @default(0)
+  total_reservation Int           @default(0)
+  total_cancelled   Int           @default(0)
+  total_completed   Int           @default(0)
+  Reservations      Reservation[]
+}
+
+model Reservation {
+  id                   Int      @id @default(autoincrement())
+  reserver             User     @relation(fields: [reserver_wallet_addr], references: [wallet_addr])
+  reserver_wallet_addr String   @db.Char(42)
+  station              Station  @relation(fields: [reserved_wallet_addr], references: [wallet_addr])
+  reserved_wallet_addr String   @db.Char(42)
+  value                Int
+  reserved_time        DateTime
+  start_time           Int
+  duration             Int
+  create_tx            String   @db.Char(66)
+  bill_tx              String?  @db.Char(66)
+  status               Int      @default(0)
+  cancel_tx            String?  @db.Char(66)
+  complete_tx          String?  @db.Char(66)
+}
+
+model Station {
+  id              Int           @id @default(autoincrement())
+  wallet_addr     String        @unique @db.Char(42)
+  name            String        @db.VarChar(255)
+  address         String        @db.VarChar(255)
+  lat             Float
+  lng             Float
+  total_slots     Int
+  pricing         Pricing[]
+  total_earned    Int           @default(0)
+  total_reserved  Int           @default(0)
+  total_cancelled Int           @default(0)
+  total_completed Int           @default(0)
+  Reservation     Reservation[]
+}
+
+model Pricing {
+  id      Int     @id @default(autoincrement())
+  price   Int
+  start   Int
+  end     Int
+  station Station @relation(fields: [id], references: [id])
+}
