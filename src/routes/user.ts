@@ -1,13 +1,21 @@
 import { PrismaClient } from "@prisma/client";
 import express from "express";
 import Web3 from "web3";
-import { registerMessage, web3Url } from "../datas/constants";
+import { userRegisterMessage, web3Url } from "../datas/constants";
 
 const userRouter = express.Router();
 const prisma = new PrismaClient();
 
 userRouter.get("/", (req, res) => {
   res.send("user router");
+});
+
+userRouter.get("/list", async (req, res) => {
+  const users = await prisma.user.findMany();
+  const usersList = users.map((user) => {
+    return { address: user.wallet_addr };
+  });
+  res.send(usersList);
 });
 
 userRouter.get("/list/:id", async (req, res) => {
@@ -38,7 +46,7 @@ userRouter.post("/register", async (req, res) => {
   const web3 = new Web3();
   let isValid = false;
   try {
-    isValid = web3.eth.accounts.recover(registerMessage, signature) === address;
+    isValid = web3.eth.accounts.recover(userRegisterMessage, signature) === address;
   } catch (e) {
     console.log("error on parsing signature");
   }

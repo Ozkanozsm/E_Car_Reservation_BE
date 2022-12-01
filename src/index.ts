@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 const morgan = require("morgan");
 
 import userRouter from "./routes/user";
+import stationRouter from "./routes/station";
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/user", userRouter);
+app.use("/station", stationRouter);
 
 app.listen(process.env.PORT, () => {
   console.log(`http://localhost:${process.env.PORT}`);
