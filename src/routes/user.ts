@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import express from "express";
 import Web3 from "web3";
-import { registerMessage } from "../datas/constants";
+import { registerMessage, web3Url } from "../datas/constants";
 
 const userRouter = express.Router();
 const prisma = new PrismaClient();
@@ -18,6 +18,19 @@ userRouter.get("/list/:id", async (req, res) => {
     },
   });
   res.json(user);
+});
+
+userRouter.post("/balance", async (req, res) => {
+  const web3 = new Web3(web3Url);
+  const { address } = req.body;
+  try {
+    const balance = await web3.eth.getBalance(address as string);
+    console.log(balance);
+
+    res.json({ balance });
+  } catch (e) {
+    res.json(e);
+  }
 });
 
 userRouter.post("/register", async (req, res) => {
