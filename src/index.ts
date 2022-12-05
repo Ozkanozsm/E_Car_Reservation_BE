@@ -5,6 +5,7 @@ const morgan = require("morgan");
 
 import userRouter from "./routes/user";
 import stationRouter from "./routes/station";
+import gasRouter from "./routes/gas";
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.get("/", (req, res) => {
 
 app.use("/user", userRouter);
 app.use("/station", stationRouter);
+app.use("/gas", gasRouter);
 
 app.listen(process.env.PORT, () => {
   console.log(`http://localhost:${process.env.PORT}`);
