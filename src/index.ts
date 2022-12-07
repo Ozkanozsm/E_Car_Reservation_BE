@@ -1,22 +1,47 @@
 import express from "express";
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
-const morgan = require("morgan");
+import morgan from "morgan";
 
 import userRouter from "./routes/user";
 import stationRouter from "./routes/station";
 import gasRouter from "./routes/gas";
+import { reservationContract } from "./utils/contracttracker";
+import contractRouter from "./routes/contract";
+import txRouter from "./routes/transaction";
 
 dotenv.config();
 
+const contractTracker = reservationContract.events
+  .allEvents()
+  .on("connected", () => {
+    console.log("connected");
+  })
+  .on("data", (event: any) => {
+    const eventtype = event.event;
+    if (eventtype === "NewReservation") {
+      console.log("----New Reservation----");
+      const eventdata = event.returnValues.newRes;
+      console.log("reserver:", eventdata.reserver);
+      console.log("station:", eventdata.station);
+      console.log("startTime:", eventdata.startTime);
+      console.log("endTime:", eventdata.endTime);
+    } else if (eventtype === "CancelReservation") {
+      console.log("----Cancel Reservation----");
+      const eventdata = event.returnValues.cancelledRes;
+      console.log("reserver:", eventdata.reserver);
+      console.log("station:", eventdata.station);
+      console.log("startTime:", eventdata.startTime);
+      console.log("endTime:", eventdata.endTime);
+    }
+  });
+
 const app = express();
-if (process.env.npm_lifecycle_event === "dev") {
-  app.use(morgan("dev"));
-} else {
-  app.use(morgan("combined"));
-}
+
+app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
 app.get("/", (req, res) => {
   res.send("e-car reservation backend");
 });
@@ -24,6 +49,8 @@ app.get("/", (req, res) => {
 app.use("/user", userRouter);
 app.use("/station", stationRouter);
 app.use("/gas", gasRouter);
+app.use("/contract", contractRouter);
+app.use("/transaction", txRouter);
 
 app.listen(process.env.PORT, () => {
   console.log(`http://localhost:${process.env.PORT}`);
