@@ -9,6 +9,7 @@ import gasRouter from "./routes/gas";
 import { reservationContract } from "./utils/contracttracker";
 import contractRouter from "./routes/contract";
 import txRouter from "./routes/transaction";
+import { newReservationToDB } from "./utils/contractwithdb";
 
 dotenv.config();
 
@@ -17,7 +18,7 @@ const contractTracker = reservationContract.events
   .on("connected", () => {
     console.log("connected");
   })
-  .on("data", (event: any) => {
+  .on("data", async (event: any) => {
     const eventtype = event.event;
     if (eventtype === "NewReservation") {
       console.log("----New Reservation----");
@@ -26,6 +27,7 @@ const contractTracker = reservationContract.events
       console.log("station:", eventdata.station);
       console.log("startTime:", eventdata.startTime);
       console.log("endTime:", eventdata.endTime);
+      await newReservationToDB(event);
     } else if (eventtype === "CancelReservation") {
       console.log("----Cancel Reservation----");
       const eventdata = event.returnValues.cancelledRes;

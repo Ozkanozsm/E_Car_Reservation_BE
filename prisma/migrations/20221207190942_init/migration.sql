@@ -25,7 +25,7 @@ CREATE TABLE "Reservation" (
     "cancel_tx" CHAR(66),
     "complete_tx" CHAR(66),
 
-    CONSTRAINT "Reservation_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Reservation_pkey" PRIMARY KEY ("create_tx")
 );
 
 -- CreateTable
@@ -57,6 +57,9 @@ CREATE TABLE "Pricing" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_wallet_addr_key" ON "User"("wallet_addr");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Reservation_create_tx_key" ON "Reservation"("create_tx");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Station_wallet_addr_key" ON "Station"("wallet_addr");
