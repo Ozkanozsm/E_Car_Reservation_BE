@@ -10,6 +10,7 @@ import { reservationContract } from "./utils/contracttracker";
 import contractRouter from "./routes/contract";
 import txRouter from "./routes/transaction";
 import { newReservationToDB } from "./utils/contractwithdb";
+import walletRouter from "./routes/wallet";
 
 dotenv.config();
 
@@ -53,6 +54,7 @@ app.use("/station", stationRouter);
 app.use("/gas", gasRouter);
 app.use("/contract", contractRouter);
 app.use("/transaction", txRouter);
+app.use("/wallet", walletRouter);
 
 app.listen(process.env.PORT, () => {
   console.log(`http://localhost:${process.env.PORT}`);
