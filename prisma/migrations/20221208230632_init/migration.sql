@@ -51,6 +51,7 @@ CREATE TABLE "Pricing" (
     "price" INTEGER NOT NULL,
     "start" INTEGER NOT NULL,
     "end" INTEGER NOT NULL,
+    "stationId" INTEGER NOT NULL,
 
     CONSTRAINT "Pricing_pkey" PRIMARY KEY ("id")
 );
@@ -71,4 +72,4 @@ ALTER TABLE "Reservation" ADD CONSTRAINT "Reservation_reserver_wallet_addr_fkey"
 ALTER TABLE "Reservation" ADD CONSTRAINT "Reservation_reserved_wallet_addr_fkey" FOREIGN KEY ("reserved_wallet_addr") REFERENCES "Station"("wallet_addr") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Pricing" ADD CONSTRAINT "Pricing_id_fkey" FOREIGN KEY ("id") REFERENCES "Station"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Pricing" ADD CONSTRAINT "Pricing_stationId_fkey" FOREIGN KEY ("stationId") REFERENCES "Station"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

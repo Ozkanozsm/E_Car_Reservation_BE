@@ -54,9 +54,10 @@ model Station {
 }
 
 model Pricing {
-  id      Int     @id @default(autoincrement())
-  price   Int
-  start   Int
-  end     Int
-  station Station @relation(fields: [id], references: [id])
+  id        Int     @id @default(autoincrement())
+  price     Int
+  start     Int
+  end       Int
+  stationId Int
+  station   Station @relation(fields: [stationId], references: [id])
 }
