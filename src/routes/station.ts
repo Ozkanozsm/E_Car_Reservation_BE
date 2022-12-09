@@ -12,9 +12,21 @@ stationRouter.get("/", (req, res) => {
 
 stationRouter.get("/list", async (req, res) => {
   try {
-    const stations = await prisma.station.findMany();
+    const stations = await prisma.station.findMany({
+      include: {
+        pricing: true,
+      },
+    });
     const stationsList = stations.map((station) => {
-      return { id: station.id, address: station.address, name: station.name };
+      return {
+        id: station.id,
+        address: station.address,
+        name: station.name,
+        lat: station.lat,
+        lng: station.lng,
+        total_slots: station.total_slots,
+        pricing: station.pricing,
+      };
     });
     res.send(stationsList);
   } catch (error) {
@@ -49,7 +61,7 @@ stationRouter.post("/register", async (req, res) => {
     lat,
     lng,
     total_slots,
-    price,
+    prices,
   } = req.body;
   const web3 = new Web3();
   let isValid = false;
@@ -78,39 +90,25 @@ stationRouter.post("/register", async (req, res) => {
             lat: lat,
             lng: lng,
             total_slots: total_slots,
+            pricing: {
+              create: [
+                {
+                  price: prices.price1,
+                  start: prices.start1,
+                  end: prices.end1,
+                },
+                {
+                  price: prices.price2,
+                  start: prices.start2,
+                  end: prices.end2,
+                },
+              ],
+            },
           },
         });
         console.log(station);
 
-        const price1 = await prisma.pricing.create({
-          data: {
-            price: price.price1,
-            start: price.start1,
-            end: price.end1,
-            station: {
-              connect: {
-                id: station.id,
-              },
-            },
-          },
-        });
-        console.log(price1);
-
-        const price2 = await prisma.pricing.create({
-          data: {
-            price: price.price2,
-            start: price.start2,
-            end: price.end2,
-            station: {
-              connect: {
-                id: station.id,
-              },
-            },
-          },
-        });
-        console.log(price2);
-
-        res.json({ station, price1, price2 });
+        res.json({ station });
       }
     } catch (error) {
       console.log(error);
