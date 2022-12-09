@@ -13,8 +13,8 @@ txRouter.get("/", (req, res) => {
 
 txRouter.post("/sendforcontract", async (req, res) => {
   const { signedTx } = req.body;
-  const web3 = new Web3(web3Url);
   try {
+    const web3 = new Web3(web3Url);
     const receipt = await web3.eth.sendSignedTransaction(signedTx);
     console.log("txhash:", receipt.transactionHash);
     res.json({ receipt });
@@ -25,8 +25,8 @@ txRouter.post("/sendforcontract", async (req, res) => {
 
 txRouter.post("/sendforprice", async (req, res) => {
   const { signedTx } = req.body;
-  const web3 = new Web3(web3Url);
   try {
+    const web3 = new Web3(web3Url);
     const receipt = await web3.eth.sendSignedTransaction(signedTx);
     console.log("txhash:", receipt.transactionHash);
     const txData = await web3.eth.getTransaction(receipt.transactionHash);
@@ -52,8 +52,9 @@ txRouter.post("/required", async (req, res) => {
 
 txRouter.post("/nonce", async (req, res) => {
   const { address } = req.body;
-  const web3 = new Web3(web3Url);
   try {
+    const web3 = new Web3(web3Url);
+
     const nonce = await web3.eth.getTransactionCount(address);
     console.log(nonce);
     res.json({ nonce });

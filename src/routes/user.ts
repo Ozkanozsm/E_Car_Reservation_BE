@@ -11,33 +11,29 @@ userRouter.get("/", (req, res) => {
 });
 
 userRouter.get("/list", async (req, res) => {
-  const users = await prisma.user.findMany();
-  const usersList = users.map((user) => {
-    return { address: user.wallet_addr };
-  });
-  res.send(usersList);
+  try {
+    const users = await prisma.user.findMany();
+    const usersList = users.map((user) => {
+      return { address: user.wallet_addr };
+    });
+    res.send(usersList);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Error on getting user list" });
+  }
 });
 
 userRouter.get("/list/:id", async (req, res) => {
   const { id } = req.params;
-  const user = await prisma.user.findUnique({
-    where: {
-      id: Number(id),
-    },
-  });
-  res.json(user);
-});
-
-userRouter.post("/balance", async (req, res) => {
-  const web3 = new Web3(web3Url);
-  const { address } = req.body;
   try {
-    const balance = await web3.eth.getBalance(address as string);
-    console.log(balance);
-
-    res.json({ balance });
-  } catch (e) {
-    res.json(e);
+    const user = await prisma.user.findUnique({
+      where: {
+        id: Number(id),
+      },
+    });
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: "Error on getting user" });
   }
 });
 
@@ -46,7 +42,8 @@ userRouter.post("/register", async (req, res) => {
   const web3 = new Web3();
   let isValid = false;
   try {
-    isValid = web3.eth.accounts.recover(userRegisterMessage, signature) === address;
+    isValid =
+      web3.eth.accounts.recover(userRegisterMessage, signature) === address;
   } catch (e) {
     console.log("error on parsing signature");
   }

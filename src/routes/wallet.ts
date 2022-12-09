@@ -18,7 +18,7 @@ walletRouter.post("/balance", async (req, res) => {
     );
     res.json({ balance });
   } catch (error) {
-    res.status(500).json({ error: error });
+    res.status(500).json({ error: "error on getting balance" });
   }
 });
 

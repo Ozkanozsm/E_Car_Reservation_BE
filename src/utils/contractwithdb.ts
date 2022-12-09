@@ -1,7 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import express from "express";
 import Web3 from "web3";
-import { userRegisterMessage, web3Url } from "../datas/constants";
+import { web3Url } from "../datas/constants";
 const prisma = new PrismaClient();
 const web3 = new Web3(web3Url);
 export const newReservationToDB = async (event: any) => {
