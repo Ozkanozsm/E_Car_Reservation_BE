@@ -18,6 +18,7 @@ model User {
   total_cancelled   Int           @default(0)
   total_completed   Int           @default(0)
   Reservations      Reservation[]
+  register_date     DateTime      @default(now())
 }
 
 model Reservation {
@@ -51,6 +52,7 @@ model Station {
   total_cancelled Int           @default(0)
   total_completed Int           @default(0)
   Reservation     Reservation[]
+  register_date   DateTime      @default(now())
 }
 
 model Pricing {
