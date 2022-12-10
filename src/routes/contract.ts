@@ -1,5 +1,5 @@
 import express from "express";
-import { contractAbi, contractAddress } from "../datas/contract";
+import { contractAbi, contractAddress, escrowAddress } from "../datas/contract";
 
 const contractRouter = express.Router();
 
@@ -13,6 +13,18 @@ contractRouter.get("/ABI", (req, res) => {
 
 contractRouter.get("/address", (req, res) => {
   res.send({ contractAddress: contractAddress });
+});
+
+contractRouter.get("/escrow", (req, res) => {
+  res.send({ escrowAddress: escrowAddress });
+});
+
+contractRouter.get("/all", (req, res) => {
+  res.json({
+    contractAddress: contractAddress,
+    escrowAddress: escrowAddress,
+    contractAbi: contractAbi,
+  });
 });
 
 export default contractRouter;
