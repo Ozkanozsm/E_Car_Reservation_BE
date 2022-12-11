@@ -19,7 +19,6 @@ export const newReservationToDB = async (event: any) => {
       console.log("station not found");
       return;
     } else {
-      console.log("station found");
       console.log(station.pricing);
       const reservationstart = parseInt(eventdata.startTime);
       const reservationend = parseInt(eventdata.endTime);
@@ -61,7 +60,7 @@ export const newReservationToDB = async (event: any) => {
           reserver_wallet_addr: eventdata.reserver,
           reserved_wallet_addr: eventdata.station,
           start_time: reservationstart,
-          duration: reservationstart - reservationend,
+          duration: reservationend - reservationstart,
           value: totalprice,
           reserved_time: new Date(),
           create_tx: event.transactionHash,
