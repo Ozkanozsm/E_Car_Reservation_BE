@@ -4,7 +4,6 @@ import { web3Url } from "../datas/constants";
 const prisma = new PrismaClient();
 const web3 = new Web3(web3Url);
 export const newReservationToDB = async (event: any) => {
-  console.log("EVENT:", event);
   const eventdata = event.returnValues.newRes;
   try {
     const station = await prisma.station.findUnique({
@@ -19,7 +18,6 @@ export const newReservationToDB = async (event: any) => {
       console.log("station not found");
       return;
     } else {
-      console.log(station.pricing);
       const reservationstart = parseInt(eventdata.startTime);
       const reservationend = parseInt(eventdata.endTime);
       const pricing1 = station.pricing[0];
@@ -48,8 +46,6 @@ export const newReservationToDB = async (event: any) => {
         const frompricing1 = (pricing1.end - reservationstart) * pricing1.price;
         const frompricing2 = (reservationend - pricing2.start) * pricing2.price;
         console.log("pricing1 and pricing2");
-        console.log("frompricing1: " + frompricing1);
-        console.log("frompricing2: " + frompricing2);
         totalprice = frompricing1 + frompricing2;
       }
 
@@ -76,9 +72,34 @@ export const newReservationToDB = async (event: any) => {
 
 export const reservationBillToDB = async (receipt: any) => {
   const txData = await web3.eth.getTransaction(receipt.transactionHash);
+
   const txInput = web3.utils.hexToAscii(txData.input);
-  console.log(txInput);
   try {
+    //find reservation
+    const reservation = await prisma.reservation.findUnique({
+      where: {
+        create_tx: txInput,
+      },
+    });
+
+    if (!reservation) {
+      console.log("reservation not found");
+      return -1;
+    }
+    //check if reservation is paid
+    if (reservation.status === 1) {
+      console.log("reservation already paid");
+      return -2;
+    }
+
+    if (
+      web3.utils.toWei(reservation.value.toString(), "ether") !==
+      txData.value.toString()
+    ) {
+      console.log("reservation price is not correct");
+      return -3;
+    }
+    //update reservation status
     await prisma.reservation.update({
       where: {
         create_tx: txInput,
@@ -89,7 +110,9 @@ export const reservationBillToDB = async (receipt: any) => {
       },
     });
     console.log("reservation bill created");
+    return true;
   } catch (error) {
     console.log(error);
+    return false;
   }
 };

@@ -10,7 +10,6 @@ gasRouter.get("/", (req, res) => {
 
 gasRouter.post("/estimate", async (req, res) => {
   const { tx } = req.body;
-  console.log(tx);
   try {
     const web3 = new Web3(web3Url);
     const gasPrice = await web3.eth.estimateGas(tx);

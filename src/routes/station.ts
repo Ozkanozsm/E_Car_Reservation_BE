@@ -37,7 +37,6 @@ stationRouter.get("/list", async (req, res) => {
 
 stationRouter.get("/list/:id", async (req, res) => {
   const { id } = req.params;
-  console.log(id);
 
   try {
     const station = await prisma.station.findUnique({
@@ -106,7 +105,6 @@ stationRouter.post("/register", async (req, res) => {
             },
           },
         });
-        console.log(station);
 
         res.json({ station });
       }
@@ -121,7 +119,6 @@ stationRouter.post("/register", async (req, res) => {
 
 stationRouter.get("/prices", async (req, res) => {
   const { id } = req.body;
-  console.log(id);
 
   try {
     const prices = await prisma.pricing.findMany({

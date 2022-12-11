@@ -25,18 +25,34 @@ const contractTracker = reservationContract.events
     if (eventtype === "NewReservation") {
       console.log("----New Reservation----");
       const eventdata = event.returnValues.newRes;
-      console.log("reserver:", eventdata.reserver);
-      console.log("station:", eventdata.station);
-      console.log("startTime:", eventdata.startTime);
-      console.log("endTime:", eventdata.endTime);
+      console.log(
+        "reserver:",
+        eventdata.reserver,
+        "station:",
+        eventdata.station
+      );
+      console.log(
+        "startTime:",
+        eventdata.startTime,
+        "endTime:",
+        eventdata.endTime
+      );
       await newReservationToDB(event);
     } else if (eventtype === "CancelReservation") {
       console.log("----Cancel Reservation----");
       const eventdata = event.returnValues.cancelledRes;
-      console.log("reserver:", eventdata.reserver);
-      console.log("station:", eventdata.station);
-      console.log("startTime:", eventdata.startTime);
-      console.log("endTime:", eventdata.endTime);
+      console.log(
+        "reserver:",
+        eventdata.reserver,
+        "station:",
+        eventdata.station
+      );
+      console.log(
+        "startTime:",
+        eventdata.startTime,
+        "endTime:",
+        eventdata.endTime
+      );
     }
   });
 

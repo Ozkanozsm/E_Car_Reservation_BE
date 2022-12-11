@@ -16,7 +16,6 @@ txRouter.post("/sendforcontract", async (req, res) => {
   try {
     const web3 = new Web3(web3Url);
     const receipt = await web3.eth.sendSignedTransaction(signedTx);
-    console.log("txhash:", receipt.transactionHash);
     res.json({ receipt });
   } catch (error) {
     res.status(500).json({ error: error });
@@ -28,11 +27,18 @@ txRouter.post("/sendforprice", async (req, res) => {
   try {
     const web3 = new Web3(web3Url);
     const receipt = await web3.eth.sendSignedTransaction(signedTx);
-    console.log("txhash:", receipt.transactionHash);
-    const txData = await web3.eth.getTransaction(receipt.transactionHash);
-    console.log(web3.utils.hexToAscii(txData.input));
-    await reservationBillToDB(receipt);
-    res.json({ receipt });
+    const success = await reservationBillToDB(receipt);
+    if (success == -1) {
+      res.status(500).json({ error: "reservation not found" });
+    } else if (success == -2) {
+      res.status(500).json({ error: "reservation already paid" });
+    } else if (success == -3) {
+      res.status(500).json({ error: "reservation price is not correct" });
+    } else if (success) {
+      res.json({ receipt, paymentSuccess: success });
+    } else {
+      res.status(500).json({ error: "unknown error" });
+    }
   } catch (error) {
     res.status(500).json({ error: error });
   }
@@ -40,6 +46,7 @@ txRouter.post("/sendforprice", async (req, res) => {
 
 txRouter.post("/required", async (req, res) => {
   const { address, tx } = req.body;
+
   try {
     const web3 = new Web3(web3Url);
     const gas = await web3.eth.estimateGas(tx);
@@ -56,7 +63,6 @@ txRouter.post("/nonce", async (req, res) => {
     const web3 = new Web3(web3Url);
 
     const nonce = await web3.eth.getTransactionCount(address);
-    console.log(nonce);
     res.json({ nonce });
   } catch (error) {
     res.status(500).json({ error: error });
