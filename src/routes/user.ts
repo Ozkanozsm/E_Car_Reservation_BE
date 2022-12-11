@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import express from "express";
 import Web3 from "web3";
-import { userRegisterMessage, web3Url } from "../datas/constants";
+import { userRegisterMessage } from "../datas/constants";
 
 const userRouter = express.Router();
 const prisma = new PrismaClient();
