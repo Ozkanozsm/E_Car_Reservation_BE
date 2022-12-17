@@ -1,6 +1,29 @@
-export const contractAddress = "0xAC7DBf6Aa4aa06d612d4f093d2F93F053586DC22";
-export const escrowAddress = "0x1cFeC1B4dc116d2BfD677Bf5d49dE36f630c685C";
+export const contractAddress = "0xf766D16A3e555Cc3D454f317751aB7f93393b0c5";
+export const escrowAddress = "0x713BFB4C706122a9cF34f42Cb796b958492CdA96";
 export const contractAbi = [
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "station",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "startTime",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "endTime",
+        type: "uint256",
+      },
+    ],
+    name: "cancelReservation",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
   {
     anonymous: false,
     inputs: [
@@ -37,6 +60,29 @@ export const contractAbi = [
     type: "event",
   },
   {
+    inputs: [
+      {
+        internalType: "address",
+        name: "station",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "startTime",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "endTime",
+        type: "uint256",
+      },
+    ],
+    name: "makeReservation",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     anonymous: false,
     inputs: [
       {
@@ -70,51 +116,5 @@ export const contractAbi = [
     ],
     name: "NewReservation",
     type: "event",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "station",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "startTime",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "endTime",
-        type: "uint256",
-      },
-    ],
-    name: "cancelReservation",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "station",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "startTime",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "endTime",
-        type: "uint256",
-      },
-    ],
-    name: "makeReservation",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
   },
 ];

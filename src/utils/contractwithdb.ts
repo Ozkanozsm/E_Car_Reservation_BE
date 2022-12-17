@@ -72,6 +72,9 @@ export const newReservationToDB = async (event: any) => {
 
 export const reservationBillToDB = async (receipt: any) => {
   const txData = await web3.eth.getTransaction(receipt.transactionHash);
+  console.log(txData);
+
+  //TODO check if price sent to escrow
 
   const txInput = web3.utils.hexToAscii(txData.input);
   try {

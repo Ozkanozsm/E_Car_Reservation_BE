@@ -18,12 +18,14 @@ reservationRouter.post("/price", async (req, res) => {
     const reservation = await prisma.reservation.findUnique({
       where: { create_tx: reservationHash },
     });
+    console.log(reservation);
+
     res.json(reservation);
   } catch (error) {
     res.status(500).json(error);
   }
 });
-//TODO: TEST
+
 reservationRouter.post("/complete", async (req, res) => {
   const { reservationHash, signature, address } = req.body;
   console.log(reservationHash);
@@ -48,7 +50,7 @@ reservationRouter.post("/complete", async (req, res) => {
       if (reservation) {
         const iscomplete = await completeReservation(reservationHash);
         if (iscomplete === -5) {
-          res.json({ error: "error on completing reservation" });
+          res.status(500).json({ error: "error on completing reservation" });
         }
         if (iscomplete === true) {
           res.json({ success: true });

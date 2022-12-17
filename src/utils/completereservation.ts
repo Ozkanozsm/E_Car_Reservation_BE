@@ -8,6 +8,7 @@ const prisma = new PrismaClient();
 
 const escrowpkey = process.env.ESCROW_PKEY as string;
 
+//TODO check if reservation is paid
 export const completeReservation = async (reshash: string) => {
   try {
     const web3 = new Web3(web3Url);
@@ -15,21 +16,36 @@ export const completeReservation = async (reshash: string) => {
     const reservation = await prisma.reservation.findUnique({
       where: { create_tx: reshash },
     });
+    console.log(reservation);
+
     if (reservation) {
       //send transaction to complete reservation
-      const baseTx = {
-        from: web3.eth.accounts.privateKeyToAccount(escrowpkey).address,
-        to: reservation.reserved_wallet_addr,
-        value: web3.utils.toWei(reservation.value.toString(), "ether"),
-        data: web3.utils.toHex(reshash),
-        gas: 21000,
-      };
+      const txFrom = web3.eth.accounts.privateKeyToAccount(escrowpkey).address;
+      const txTo = reservation.reserved_wallet_addr;
+      const txValue = Number(
+        web3.utils.toWei(reservation.value.toString(), "ether")
+      );
+      const txData = web3.utils.toHex(reshash);
+      let txGas = 0;
+
       //first estimate gas
-      const gas = await web3.eth.estimateGas(baseTx);
-      baseTx.gas = gas;
+      const gas = await web3.eth.estimateGas({
+        from: txFrom,
+        to: txTo,
+        value: txValue,
+        data: txData,
+      });
+      console.log(gas);
+      txGas = gas;
       //then sign transaction
       const signedTx = (await web3.eth.accounts.signTransaction(
-        baseTx,
+        {
+          from: txFrom,
+          to: txTo,
+          value: txValue,
+          data: txData,
+          gas: txGas,
+        },
         escrowpkey
       )) as any;
 
@@ -41,7 +57,7 @@ export const completeReservation = async (reshash: string) => {
       //update reservation status
       await prisma.reservation.update({
         where: { create_tx: reshash },
-        data: { status: 5, bill_tx: receipt.transactionHash },
+        data: { status: 5, complete_tx: receipt.transactionHash },
       });
       return true;
     }
