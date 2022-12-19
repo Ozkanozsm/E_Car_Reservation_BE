@@ -62,6 +62,28 @@ export const newReservationToDB = async (event: any) => {
           create_tx: event.transactionHash,
         },
       });
+      const user = await prisma.user.findUnique({
+        where: {
+          wallet_addr: eventdata.reserver,
+        },
+      });
+      if (!user) {
+        console.log("user not found");
+        return;
+      }
+      const updatedUser = await prisma.user.update({
+        where: {
+          wallet_addr: eventdata.reserver,
+        },
+        data: {
+          Reservations: {
+            connect: {
+              create_tx: event.transactionHash,
+            },
+          },
+        },
+      });
+      console.log(updatedUser);
     }
   } catch (error) {
     console.log(error);

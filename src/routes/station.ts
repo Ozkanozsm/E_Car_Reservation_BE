@@ -51,6 +51,8 @@ stationRouter.get("/list/:id", async (req, res) => {
   }
 });
 
+
+//TODO check if station tries to register without necessary data
 stationRouter.post("/register", async (req, res) => {
   const {
     wallet_address,

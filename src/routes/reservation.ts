@@ -65,4 +65,42 @@ reservationRouter.post("/complete", async (req, res) => {
   }
 });
 
+reservationRouter.get("/reservation/:id", async (req, res) => {
+  const { id } = req.params;
+  let intid;
+  try {
+    //parse to int
+    intid = parseInt(id);
+  } catch (error) {
+    res.status(500).json({ error: `id ${id} is not a number` });
+  }
+
+  try {
+    const reservation = await prisma.reservation.findUnique({
+      where: {
+        id: intid,
+      },
+    });
+    res.json(reservation);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+reservationRouter.get("/all", async (req, res) => {
+  try {
+    //find reservations and users of reservations
+    const reservations = await prisma.reservation.findMany({
+      include: {
+        reserver: true,
+        station: true,
+      },
+    });
+
+    res.json(reservations);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
 export default reservationRouter;
