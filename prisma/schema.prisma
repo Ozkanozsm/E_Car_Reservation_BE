@@ -11,7 +11,7 @@ datasource db {
 }
 
 model User {
-  id                Int           @id @default(autoincrement()) @unique
+  id                Int           @id @unique @default(autoincrement())
   wallet_addr       String        @unique @db.Char(42)
   total_spent       Int           @default(0)
   total_reservation Int           @default(0)
@@ -22,7 +22,7 @@ model User {
 }
 
 model Reservation {
-  id                   Int      @default(autoincrement()) @unique
+  id                   Int      @unique @default(autoincrement())
   reserver             User     @relation(fields: [reserver_wallet_addr], references: [wallet_addr])
   reserver_wallet_addr String   @db.Char(42)
   station              Station  @relation(fields: [reserved_wallet_addr], references: [wallet_addr])
@@ -39,7 +39,7 @@ model Reservation {
 }
 
 model Station {
-  id              Int           @id @default(autoincrement()) @unique
+  id              Int           @id @unique @default(autoincrement())
   wallet_addr     String        @unique @db.Char(42)
   name            String        @db.VarChar(255)
   address         String        @db.VarChar(255)
@@ -51,12 +51,12 @@ model Station {
   total_reserved  Int           @default(0)
   total_cancelled Int           @default(0)
   total_completed Int           @default(0)
-  Reservation     Reservation[]
+  Reservations    Reservation[]
   register_date   DateTime      @default(now())
 }
 
 model Pricing {
-  id        Int     @id @default(autoincrement()) @unique
+  id        Int     @id @unique @default(autoincrement())
   price     Int
   start     Int
   end       Int

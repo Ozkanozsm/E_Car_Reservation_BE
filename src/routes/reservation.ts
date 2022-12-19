@@ -65,7 +65,7 @@ reservationRouter.post("/complete", async (req, res) => {
   }
 });
 
-reservationRouter.get("/getbyid/:id", async (req, res) => {
+reservationRouter.get("/byid/:id", async (req, res) => {
   const { id } = req.params;
   const intid = parseInt(id);
   if (isNaN(intid)) {
@@ -89,20 +89,72 @@ reservationRouter.get("/getbyid/:id", async (req, res) => {
   }
 });
 
-reservationRouter.get("/getbyaddress/:address", async (req, res) => {
+reservationRouter.get("/byuseraddress/:address", async (req, res) => {
   const { address } = req.params;
   try {
-    const reservations = await prisma.reservation.findMany({
+    const user = await prisma.user.findUnique({
       where: {
-        reserver_wallet_addr: address,
+        wallet_addr: address,
       },
       include: {
-        station: true,
+        Reservations: true,
       },
     });
-    res.json(reservations);
+    if (user) {
+      res.json(user);
+    } else {
+      res.json({ error: "user not found" });
+    }
   } catch (error) {
     res.status(500).json(error);
+  }
+});
+
+reservationRouter.get("/bystationaddress/:stationaddress", async (req, res) => {
+  const { stationaddress } = req.params;
+  try {
+    const station = await prisma.station.findUnique({
+      where: {
+        wallet_addr: stationaddress,
+      },
+      include: {
+        Reservations: true,
+      },
+    });
+    if (station) {
+      res.json(station);
+    } else {
+      res.json({ error: "station not found" });
+    }
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+reservationRouter.get("/bystationid/:stationid", async (req, res) => {
+  const { stationid } = req.params;
+  const intid = parseInt(stationid);
+  if (isNaN(intid)) {
+    res.status(500).json({ error: `id ${stationid} is not a number` });
+    return;
+  } else {
+    try {
+      const station = await prisma.station.findUnique({
+        where: {
+          id: intid,
+        },
+        include: {
+          Reservations: true,
+        },
+      });
+      if (station) {
+        res.json(station);
+      } else {
+        res.json({ error: "station not found" });
+      }
+    } catch (error) {
+      res.status(500).json(error);
+    }
   }
 });
 

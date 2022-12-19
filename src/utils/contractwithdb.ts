@@ -51,7 +51,7 @@ export const newReservationToDB = async (event: any) => {
 
       console.log(totalprice);
 
-      await prisma.reservation.create({
+      const createdres = await prisma.reservation.create({
         data: {
           reserver_wallet_addr: eventdata.reserver,
           reserved_wallet_addr: eventdata.station,
@@ -78,12 +78,26 @@ export const newReservationToDB = async (event: any) => {
         data: {
           Reservations: {
             connect: {
-              create_tx: event.transactionHash,
+              id: createdres.id,
             },
           },
         },
       });
+      const updatedStation = await prisma.station.update({
+        where: {
+          wallet_addr: eventdata.station,
+        },
+        data: {
+          Reservations: {
+            connect: {
+              id: createdres.id,
+            },
+          },
+        },
+      });
+
       console.log(updatedUser);
+      console.log(updatedStation);
     }
   } catch (error) {
     console.log(error);
