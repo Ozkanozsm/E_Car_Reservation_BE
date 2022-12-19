@@ -10,6 +10,7 @@ reservationRouter.get("/", (req, res) => {
   res.send("reservation router");
 });
 
+//oluşturulmuş rezervasyonun fiyat bilgisini döndürür
 reservationRouter.post("/price", async (req, res) => {
   const { reservationHash } = req.body;
   console.log(reservationHash);
@@ -26,6 +27,7 @@ reservationRouter.post("/price", async (req, res) => {
   }
 });
 
+//oluşturulmuş rezervasyonu tamamlar
 reservationRouter.post("/complete", async (req, res) => {
   const { reservationHash, signature, address } = req.body;
   console.log(reservationHash);
@@ -48,6 +50,7 @@ reservationRouter.post("/complete", async (req, res) => {
         where: { create_tx: reservationHash },
       });
       if (reservation) {
+        //rezervasyon varsa
         const iscomplete = await completeReservation(reservationHash);
         if (iscomplete === -5) {
           res.status(500).json({ error: "error on completing reservation" });
@@ -65,14 +68,17 @@ reservationRouter.post("/complete", async (req, res) => {
   }
 });
 
+//oluşturulmuş rezervasyonun bilgilerini verilen rezervasyon id'sine göre döndürür
 reservationRouter.get("/byid/:id", async (req, res) => {
   const { id } = req.params;
   const intid = parseInt(id);
   if (isNaN(intid)) {
+    //girilmiş id sayı değilse
     res.status(500).json({ error: `id ${id} is not a number` });
     return;
   } else {
     try {
+      //girilmiş id sayı ise
       const reservation = await prisma.reservation.findUnique({
         where: {
           id: intid,
@@ -84,6 +90,7 @@ reservationRouter.get("/byid/:id", async (req, res) => {
       });
       res.json(reservation);
     } catch (error) {
+      //rezervasyon bulunamadıysa
       res.status(500).json(error);
     }
   }
@@ -158,6 +165,7 @@ reservationRouter.get("/bystationid/:stationid", async (req, res) => {
   }
 });
 
+//tüm rezervasyonları döndürür
 reservationRouter.get("/all", async (req, res) => {
   try {
     const reservations = await prisma.reservation.findMany({

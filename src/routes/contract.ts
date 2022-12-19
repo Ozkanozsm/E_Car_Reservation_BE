@@ -19,6 +19,7 @@ contractRouter.get("/escrow", (req, res) => {
   res.send({ escrowAddress: escrowAddress });
 });
 
+//contract'a dair tüm bilgileri döndürür
 contractRouter.get("/all", (req, res) => {
   res.json({
     contractAddress: contractAddress,

@@ -111,6 +111,14 @@ export const reservationBillToDB = async (receipt: any) => {
   console.log(txData);
 
   //TODO check if price sent to escrow
+  if (
+    txData.to !==
+    web3.eth.accounts.privateKeyToAccount(process.env.ESCROW_PKEY as string)
+      .address
+  ) {
+    console.log("transaction not sent to escrow");
+    return -4;
+  }
 
   const txInput = web3.utils.hexToAscii(txData.input);
   try {

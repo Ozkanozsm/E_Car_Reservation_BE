@@ -10,6 +10,7 @@ stationRouter.get("/", (req, res) => {
   res.send("station router");
 });
 
+//tüm istasyonları listeler
 stationRouter.get("/list", async (req, res) => {
   try {
     const stations = await prisma.station.findMany({
@@ -174,7 +175,6 @@ stationRouter.post("/search", async (req, res) => {
   }
 });
 
-//TODO: change price
 stationRouter.post("/changeprice", async (req, res) => {
   const { signature, wallet_address, prices } = req.body;
   console.log(prices);

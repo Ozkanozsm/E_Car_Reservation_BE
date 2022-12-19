@@ -8,6 +8,7 @@ gasRouter.get("/", (req, res) => {
   res.send("gas router");
 });
 
+//oluşturulmuş bir tx için gerekli olan gas miktarını hesaplar
 gasRouter.post("/estimate", async (req, res) => {
   const { tx } = req.body;
   try {
