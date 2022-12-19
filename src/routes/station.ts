@@ -51,7 +51,6 @@ stationRouter.get("/list/:id", async (req, res) => {
   }
 });
 
-
 //TODO check if station tries to register without necessary data
 stationRouter.post("/register", async (req, res) => {
   const {
@@ -176,5 +175,63 @@ stationRouter.post("/search", async (req, res) => {
 });
 
 //TODO: change price
+stationRouter.post("/changeprice", async (req, res) => {
+  const { signature, wallet_address, prices } = req.body;
+  console.log(prices);
+
+  const web3 = new Web3();
+  let isValid = false;
+  try {
+    isValid =
+      web3.eth.accounts.recover(JSON.stringify(prices), signature) ===
+      wallet_address;
+  } catch (e) {
+    console.log("error on parsing signature");
+  }
+  if (isValid) {
+    try {
+      const stationandprices = await prisma.station.findUnique({
+        where: {
+          wallet_addr: wallet_address,
+        },
+        include: {
+          pricing: true,
+        },
+      });
+      if (stationandprices) {
+        //change price1
+        await prisma.pricing.update({
+          where: {
+            id: stationandprices.pricing[0].id,
+          },
+          data: {
+            price: prices.price1,
+            start: prices.start1,
+            end: prices.end1,
+          },
+        });
+        //change price2
+        await prisma.pricing.update({
+          where: {
+            id: stationandprices.pricing[1].id,
+          },
+          data: {
+            price: prices.price2,
+            start: prices.start2,
+            end: prices.end2,
+          },
+        });
+        res.json({ prices });
+      } else {
+        res.status(400).json({ message: "station not found" });
+      }
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: "Error on creating station" });
+    }
+  } else {
+    res.status(400).json({ message: "invalid signature" });
+  }
+});
 
 export default stationRouter;
