@@ -108,7 +108,12 @@ reservationRouter.get("/getbyaddress/:address", async (req, res) => {
 
 reservationRouter.get("/all", async (req, res) => {
   try {
-    const reservations = await prisma.reservation.findMany();
+    const reservations = await prisma.reservation.findMany({
+      include: {
+        reserver: true,
+        station: true,
+      },
+    });
     res.json(reservations);
   } catch (error) {
     res.status(500).json(error);
