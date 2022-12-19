@@ -65,23 +65,42 @@ reservationRouter.post("/complete", async (req, res) => {
   }
 });
 
-reservationRouter.get("/reservation/:id", async (req, res) => {
+reservationRouter.get("/getbyid/:id", async (req, res) => {
   const { id } = req.params;
-  let intid;
-  try {
-    //parse to int
-    intid = parseInt(id);
-  } catch (error) {
+  const intid = parseInt(id);
+  if (isNaN(intid)) {
     res.status(500).json({ error: `id ${id} is not a number` });
+    return;
+  } else {
+    try {
+      const reservation = await prisma.reservation.findUnique({
+        where: {
+          id: intid,
+        },
+        include: {
+          reserver: true,
+          station: true,
+        },
+      });
+      res.json(reservation);
+    } catch (error) {
+      res.status(500).json(error);
+    }
   }
+});
 
+reservationRouter.get("/getbyaddress/:address", async (req, res) => {
+  const { address } = req.params;
   try {
-    const reservation = await prisma.reservation.findUnique({
+    const reservations = await prisma.reservation.findMany({
       where: {
-        id: intid,
+        reserver_wallet_addr: address,
+      },
+      include: {
+        station: true,
       },
     });
-    res.json(reservation);
+    res.json(reservations);
   } catch (error) {
     res.status(500).json(error);
   }
@@ -89,14 +108,7 @@ reservationRouter.get("/reservation/:id", async (req, res) => {
 
 reservationRouter.get("/all", async (req, res) => {
   try {
-    //find reservations and users of reservations
-    const reservations = await prisma.reservation.findMany({
-      include: {
-        reserver: true,
-        station: true,
-      },
-    });
-
+    const reservations = await prisma.reservation.findMany();
     res.json(reservations);
   } catch (error) {
     res.status(500).json(error);
