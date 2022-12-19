@@ -8,7 +8,6 @@ const prisma = new PrismaClient();
 
 const escrowpkey = process.env.ESCROW_PKEY as string;
 
-//TODO check if reservation is paid
 export const completeReservation = async (reshash: string) => {
   try {
     const web3 = new Web3(web3Url);
