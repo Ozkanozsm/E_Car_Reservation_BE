@@ -5,6 +5,27 @@ const prisma = new PrismaClient();
 const web3 = new Web3(web3Url);
 export const newReservationToDB = async (event: any) => {
   const eventdata = event.returnValues.newRes;
+  console.log("eventdata", eventdata);
+  //starttime is epoch to date and hour
+  const starttime = new Date(parseInt(eventdata.startTime) * 1000);
+  const startdate = starttime.toLocaleDateString();
+  const starthour = starttime.getHours();
+  console.log("startdate", startdate);
+  console.log("starthour", starthour);
+  //endtime is epoch to date and hour
+  const endtime = new Date(parseInt(eventdata.endTime) * 1000);
+  const enddate = endtime.toLocaleDateString();
+  const endhour = endtime.getHours();
+  console.log("enddate", enddate);
+  console.log("endhour", endhour);
+  //check if reservation is in the same day
+  let sameDay = false;
+  if (startdate === enddate) {
+    console.log("same day");
+  } else {
+    console.log("not same day");
+  }
+
   try {
     const station = await prisma.station.findUnique({
       where: {
