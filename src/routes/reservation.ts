@@ -75,7 +75,6 @@ reservationRouter.get("/byid/:id", async (req, res) => {
   if (isNaN(intid)) {
     //girilmiş id sayı değilse
     res.status(500).json({ error: `id ${id} is not a number` });
-    return;
   } else {
     try {
       //girilmiş id sayı ise
@@ -143,7 +142,6 @@ reservationRouter.get("/bystationid/:stationid", async (req, res) => {
   const intid = parseInt(stationid);
   if (isNaN(intid)) {
     res.status(500).json({ error: `id ${stationid} is not a number` });
-    return;
   } else {
     try {
       const station = await prisma.station.findUnique({

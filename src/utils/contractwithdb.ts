@@ -22,6 +22,7 @@ export const newReservationToDB = async (event: any) => {
   let sameDay = false;
   if (startdate === enddate) {
     console.log("same day");
+    sameDay = true;
   } else {
     console.log("not same day");
   }
@@ -39,38 +40,14 @@ export const newReservationToDB = async (event: any) => {
       console.log("station not found");
       return;
     } else {
-      const reservationstart = parseInt(eventdata.startTime);
-      const reservationend = parseInt(eventdata.endTime);
       const pricing1 = station.pricing[0];
       const pricing2 = station.pricing[1];
+      console.log("pricing1", pricing1);
+      console.log("pricing2", pricing2);
 
-      //calculate total price
-      let totalprice = 0;
-      if (
-        pricing1.start <= reservationstart &&
-        reservationend <= pricing2.start
-      ) {
-        console.log("pricing1");
-
-        totalprice = (reservationend - reservationstart) * pricing1.price;
-      } else if (
-        pricing2.start <= reservationstart &&
-        reservationend <= pricing2.end
-      ) {
-        console.log("pricing2");
-
-        totalprice = (reservationend - reservationstart) * pricing2.price;
-      } else if (
-        pricing1.start <= reservationstart &&
-        reservationend <= pricing2.end
-      ) {
-        const frompricing1 = (pricing1.end - reservationstart) * pricing1.price;
-        const frompricing2 = (reservationend - pricing2.start) * pricing2.price;
-        console.log("pricing1 and pricing2");
-        totalprice = frompricing1 + frompricing2;
-      }
-
-      console.log(totalprice);
+      const tempPrice = 0;
+      const reservationstart = parseInt(eventdata.startTime);
+      const reservationend = parseInt(eventdata.endTime);
 
       const createdres = await prisma.reservation.create({
         data: {
@@ -78,7 +55,7 @@ export const newReservationToDB = async (event: any) => {
           reserved_wallet_addr: eventdata.station,
           start_time: reservationstart,
           duration: reservationend - reservationstart,
-          value: totalprice,
+          value: tempPrice,
           reserved_time: new Date(),
           create_tx: event.transactionHash,
         },
@@ -117,14 +94,13 @@ export const newReservationToDB = async (event: any) => {
         },
       });
 
-      console.log(updatedUser);
-      console.log(updatedStation);
+      //console.log(updatedUser);
+      //console.log(updatedStation);
+      console.log("new reservation created");
     }
   } catch (error) {
     console.log(error);
   }
-
-  console.log("new reservation created");
 };
 
 export const reservationBillToDB = async (receipt: any) => {

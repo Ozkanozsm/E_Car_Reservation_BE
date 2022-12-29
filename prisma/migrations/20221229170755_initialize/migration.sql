@@ -6,6 +6,7 @@ CREATE TABLE "User" (
     "total_reservation" INTEGER NOT NULL DEFAULT 0,
     "total_cancelled" INTEGER NOT NULL DEFAULT 0,
     "total_completed" INTEGER NOT NULL DEFAULT 0,
+    "register_date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -15,7 +16,7 @@ CREATE TABLE "Reservation" (
     "id" SERIAL NOT NULL,
     "reserver_wallet_addr" CHAR(42) NOT NULL,
     "reserved_wallet_addr" CHAR(42) NOT NULL,
-    "value" INTEGER NOT NULL,
+    "value" DOUBLE PRECISION NOT NULL,
     "reserved_time" TIMESTAMP(3) NOT NULL,
     "start_time" INTEGER NOT NULL,
     "duration" INTEGER NOT NULL,
@@ -41,6 +42,7 @@ CREATE TABLE "Station" (
     "total_reserved" INTEGER NOT NULL DEFAULT 0,
     "total_cancelled" INTEGER NOT NULL DEFAULT 0,
     "total_completed" INTEGER NOT NULL DEFAULT 0,
+    "register_date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Station_pkey" PRIMARY KEY ("id")
 );
@@ -57,13 +59,25 @@ CREATE TABLE "Pricing" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "User_id_key" ON "User"("id");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "User_wallet_addr_key" ON "User"("wallet_addr");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Reservation_id_key" ON "Reservation"("id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Reservation_create_tx_key" ON "Reservation"("create_tx");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Station_id_key" ON "Station"("id");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Station_wallet_addr_key" ON "Station"("wallet_addr");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Pricing_id_key" ON "Pricing"("id");
 
 -- AddForeignKey
 ALTER TABLE "Reservation" ADD CONSTRAINT "Reservation_reserver_wallet_addr_fkey" FOREIGN KEY ("reserver_wallet_addr") REFERENCES "User"("wallet_addr") ON DELETE RESTRICT ON UPDATE CASCADE;

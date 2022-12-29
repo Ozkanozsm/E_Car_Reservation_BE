@@ -27,7 +27,7 @@ model Reservation {
   reserver_wallet_addr String   @db.Char(42)
   station              Station  @relation(fields: [reserved_wallet_addr], references: [wallet_addr])
   reserved_wallet_addr String   @db.Char(42)
-  value                Int
+  value                Float
   reserved_time        DateTime
   start_time           Int
   duration             Int
