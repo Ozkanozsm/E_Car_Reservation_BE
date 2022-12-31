@@ -45,7 +45,25 @@ export const newReservationToDB = async (event: any) => {
       console.log("pricing1", pricing1);
       console.log("pricing2", pricing2);
 
-      const tempPrice = 0;
+      console.log(
+        starttime.getDay(),
+        starttime.getMonth(),
+        starttime.getFullYear()
+      );
+
+      //calculate duration in minutes
+      const durationInMinutes =
+        (parseInt(eventdata.endTime) - parseInt(eventdata.startTime)) / 60;
+      console.log("durationInMinutes", durationInMinutes);
+      let tempPrice;
+      if (starthour >= pricing1.start && starthour < pricing1.end) {
+        console.log("pricing1");
+        tempPrice = (durationInMinutes / 60) * pricing1.price;
+      } else {
+        console.log("pricing2");
+        tempPrice = (durationInMinutes / 60) * pricing2.price;
+      }
+      console.log("price:", tempPrice);
       const reservationstart = parseInt(eventdata.startTime);
       const reservationend = parseInt(eventdata.endTime);
 

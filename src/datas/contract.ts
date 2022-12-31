@@ -1,5 +1,5 @@
-export const contractAddress = "0xfB1067b2A204229bc8c259905152Cc824CE80862";
-export const escrowAddress = "0x713BFB4C706122a9cF34f42Cb796b958492CdA96";
+export const contractAddress = "0x00211aEc84Ac4304F0d563521E706D2f39B3fD3c";
+export const escrowAddress = "0xcF57C5E9576Ce4f49e12bDb8d8602a9D2B385E89";
 export const contractAbi = [
   {
     inputs: [
