@@ -12,7 +12,6 @@ const escrowpkey = process.env.ESCROW_PKEY as string;
 
 export const newReservationToDB = async (event: any) => {
   const eventdata = event.returnValues.newRes;
-  console.log("eventdata", eventdata);
   //starttime is epoch to date and hour
   const starttime = new Date(parseInt(eventdata.startTime) * 1000);
   const startdate = starttime.toLocaleDateString();
@@ -25,14 +24,6 @@ export const newReservationToDB = async (event: any) => {
   const endhour = endtime.getHours();
   console.log("enddate", enddate);
   console.log("endhour", endhour);
-  //check if reservation is in the same day
-  let sameDay = false;
-  if (startdate === enddate) {
-    console.log("same day");
-    sameDay = true;
-  } else {
-    console.log("not same day");
-  }
 
   try {
     const station = await prisma.station.findUnique({
@@ -118,9 +109,6 @@ export const newReservationToDB = async (event: any) => {
           },
         },
       });
-
-      //console.log(updatedUser);
-      //console.log(updatedStation);
       console.log("new reservation created");
     }
   } catch (error) {
@@ -130,7 +118,7 @@ export const newReservationToDB = async (event: any) => {
 
 export const reservationBillToDB = async (receipt: any) => {
   const txData = await web3.eth.getTransaction(receipt.transactionHash);
-  console.log(txData);
+  //console.log(txData);
 
   //TODO check if price sent to escrow
   if (txData.to !== escrowAddress) {
@@ -248,7 +236,6 @@ export const reservationCancelToDB = async (event: any) => {
       });
 
       console.log("reservation cancelled");
-
     }
   } catch (error) {
     console.log(error);

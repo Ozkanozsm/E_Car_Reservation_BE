@@ -13,12 +13,12 @@ txRouter.get("/", (req, res) => {
 
 txRouter.post("/sendforcontract", async (req, res) => {
   const { signedTx } = req.body;
-  console.log(signedTx);
+  //console.log(signedTx);
 
   try {
     const web3 = new Web3(web3Url);
     const receipt = await web3.eth.sendSignedTransaction(signedTx);
-    console.log(receipt);
+    //console.log(receipt);
 
     res.json({ receipt });
   } catch (error) {

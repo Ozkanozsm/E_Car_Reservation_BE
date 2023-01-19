@@ -1,5 +1,5 @@
-export const contractAddress = "0xB0A3b2Efd3295cCdb7C8871a5586F4ef9A8b606C";
-export const escrowAddress = "0xcF57C5E9576Ce4f49e12bDb8d8602a9D2B385E89";
+export const contractAddress = "0x71b56B4AE126fFD6E8133eAC43e6B276493105F7";
+export const escrowAddress = "0x680C4c4Ca6cb24aE01371f0CBc372c94afE6c350";
 export const contractAbi = [
   {
     anonymous: false,

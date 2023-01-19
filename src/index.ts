@@ -34,7 +34,6 @@ app.use("/contract", contractRouter);
 app.use("/transaction", txRouter);
 app.use("/wallet", walletRouter);
 app.use("/reservation", reservationRouter);
-//todo make contractTracker modular
 
 app.listen(process.env.PORT, () => {
   console.log(`http://localhost:${process.env.PORT}`);

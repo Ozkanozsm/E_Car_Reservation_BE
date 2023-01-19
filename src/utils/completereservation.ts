@@ -52,7 +52,7 @@ export const completeReservation = async (reshash: string) => {
       const receipt = await web3.eth.sendSignedTransaction(
         signedTx.rawTransaction
       );
-      console.log(receipt);
+      //console.log(receipt);
       //update reservation status
       await prisma.reservation.update({
         where: { create_tx: reshash },

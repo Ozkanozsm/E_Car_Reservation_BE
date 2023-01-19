@@ -19,7 +19,7 @@ reservationRouter.post("/price", async (req, res) => {
     const reservation = await prisma.reservation.findUnique({
       where: { create_tx: reservationHash },
     });
-    console.log(reservation);
+    //console.log(reservation);
 
     res.json(reservation);
   } catch (error) {
