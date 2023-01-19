@@ -1,8 +1,15 @@
 import { PrismaClient } from "@prisma/client";
 import Web3 from "web3";
-import { web3Url } from "../datas/constants";
+import dotenv from "dotenv";
+
+import { statusResCancelled, statusResPaid, web3Url } from "../datas/constants";
+import { escrowAddress } from "../datas/contract";
 const prisma = new PrismaClient();
 const web3 = new Web3(web3Url);
+
+dotenv.config();
+const escrowpkey = process.env.ESCROW_PKEY as string;
+
 export const newReservationToDB = async (event: any) => {
   const eventdata = event.returnValues.newRes;
   console.log("eventdata", eventdata);
@@ -126,15 +133,10 @@ export const reservationBillToDB = async (receipt: any) => {
   console.log(txData);
 
   //TODO check if price sent to escrow
-  if (
-    txData.to !==
-    web3.eth.accounts.privateKeyToAccount(process.env.ESCROW_PKEY as string)
-      .address
-  ) {
+  if (txData.to !== escrowAddress) {
     console.log("transaction not sent to escrow");
     return -4;
   }
-
   const txInput = web3.utils.hexToAscii(txData.input);
   try {
     //find reservation
@@ -149,7 +151,7 @@ export const reservationBillToDB = async (receipt: any) => {
       return -1;
     }
     //check if reservation is paid
-    if (reservation.status === 1) {
+    if (reservation.status === statusResPaid) {
       console.log("reservation already paid");
       return -2;
     }
@@ -168,7 +170,7 @@ export const reservationBillToDB = async (receipt: any) => {
       },
       data: {
         bill_tx: receipt.transactionHash,
-        status: 1,
+        status: statusResPaid,
       },
     });
     console.log("reservation bill created");
@@ -176,5 +178,79 @@ export const reservationBillToDB = async (receipt: any) => {
   } catch (error) {
     console.log(error);
     return false;
+  }
+};
+
+export const reservationCancelToDB = async (event: any) => {
+  const cancelledRes = event.returnValues.cancelledRes;
+  const canceller = event.returnValues.canceller;
+
+  try {
+    const reservation = await prisma.reservation.findUnique({
+      where: {
+        create_tx: cancelledRes,
+      },
+    });
+
+    if (!reservation) {
+      console.log("reservation not found");
+      return;
+    }
+    if (reservation.status === statusResCancelled) {
+      console.log("reservation already cancelled");
+      return;
+    }
+    if (reservation.reserver_wallet_addr !== canceller) {
+      console.log("canceller is not reserver");
+      return;
+    }
+    if (reservation.status === statusResPaid) {
+      const txFrom = web3.eth.accounts.privateKeyToAccount(escrowpkey).address;
+      const txTo = reservation.reserver_wallet_addr;
+      const txValue = Number(
+        web3.utils.toWei(reservation.value.toString(), "ether")
+      );
+      const txData = web3.utils.toHex(reservation.create_tx);
+      let txGas = 0;
+
+      //first estimate gas
+      const gas = await web3.eth.estimateGas({
+        from: txFrom,
+        to: txTo,
+        value: txValue,
+        data: txData,
+      });
+      txGas = gas;
+      //then sign transaction
+      const signedTx = (await web3.eth.accounts.signTransaction(
+        {
+          from: txFrom,
+          to: txTo,
+          value: txValue,
+          data: txData,
+          gas: txGas,
+        },
+        escrowpkey
+      )) as any;
+
+      //then send transaction
+      const receipt = await web3.eth.sendSignedTransaction(
+        signedTx.rawTransaction
+      );
+      //update reservation status
+
+      await prisma.reservation.update({
+        where: { create_tx: cancelledRes },
+        data: {
+          status: statusResCancelled,
+          cancel_tx: receipt.transactionHash,
+        },
+      });
+
+      console.log("reservation cancelled");
+
+    }
+  } catch (error) {
+    console.log(error);
   }
 };

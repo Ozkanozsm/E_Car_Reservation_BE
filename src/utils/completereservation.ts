@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import dotenv from "dotenv";
 import Web3 from "web3";
-import { web3Url } from "../datas/constants";
+import { statusResCompleted, web3Url } from "../datas/constants";
 
 dotenv.config();
 const prisma = new PrismaClient();
@@ -56,7 +56,10 @@ export const completeReservation = async (reshash: string) => {
       //update reservation status
       await prisma.reservation.update({
         where: { create_tx: reshash },
-        data: { status: 5, complete_tx: receipt.transactionHash },
+        data: {
+          status: statusResCompleted,
+          complete_tx: receipt.transactionHash,
+        },
       });
       return true;
     }

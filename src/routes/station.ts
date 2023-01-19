@@ -18,7 +18,7 @@ stationRouter.get("/list", async (req, res) => {
         pricing: true,
       },
     });
-    const stationsList = stations.map((station) => {
+    const stationsList = stations.map((station: any) => {
       return {
         id: station.id,
         address: station.address,
@@ -129,7 +129,7 @@ stationRouter.get("/prices", async (req, res) => {
       },
     });
     //return only price start and end
-    const pricesList = prices.map((price) => {
+    const pricesList = prices.map((price: any) => {
       return {
         price: price.price,
         start: price.start,
@@ -165,7 +165,7 @@ stationRouter.post("/search", async (req, res) => {
         ],
       },
     });
-    const stationsList = stations.map((station) => {
+    const stationsList = stations.map((station: any) => {
       return { id: station.id, address: station.address, name: station.name };
     });
     res.json(stationsList);

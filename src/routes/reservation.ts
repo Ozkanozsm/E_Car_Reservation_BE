@@ -1,8 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import express from "express";
 import Web3 from "web3";
+import { statusResCompleted, statusResCancelled } from "../datas/constants";
 import { completeReservation } from "../utils/completereservation";
-
 const reservationRouter = express.Router();
 const prisma = new PrismaClient();
 

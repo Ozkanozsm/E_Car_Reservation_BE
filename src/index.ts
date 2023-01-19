@@ -6,16 +6,17 @@ import morgan from "morgan";
 import userRouter from "./routes/user";
 import stationRouter from "./routes/station";
 import gasRouter from "./routes/gas";
-import { reservationContract, tracker } from "./utils/contracttracker";
+import { reservationContract, conTracker } from "./utils/contracttracker";
 import contractRouter from "./routes/contract";
 import txRouter from "./routes/transaction";
 import { newReservationToDB } from "./utils/contractwithdb";
 import walletRouter from "./routes/wallet";
 import reservationRouter from "./routes/reservation";
+import { latenessTracker } from "./utils/latenessTracker";
 
 dotenv.config();
-const contrackTracker = tracker;
-
+const contractTracker = conTracker;
+const lateTracker = latenessTracker;
 const app = express();
 
 app.use(morgan("dev"));
@@ -34,7 +35,6 @@ app.use("/transaction", txRouter);
 app.use("/wallet", walletRouter);
 app.use("/reservation", reservationRouter);
 //todo make contractTracker modular
-
 
 app.listen(process.env.PORT, () => {
   console.log(`http://localhost:${process.env.PORT}`);
