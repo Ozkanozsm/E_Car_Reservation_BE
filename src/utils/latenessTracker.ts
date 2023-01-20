@@ -115,4 +115,4 @@ export const latenessTracker = setInterval(async () => {
     console.log(error);
     console.log("-----late reservation check failed-----");
   }
-}, 15000);
+}, 60000);

@@ -13,7 +13,7 @@ txRouter.get("/", (req, res) => {
 
 txRouter.post("/sendforcontract", async (req, res) => {
   const { signedTx } = req.body;
-  //console.log(signedTx);
+  console.log(signedTx);
 
   try {
     const web3 = new Web3(web3Url);
@@ -23,6 +23,7 @@ txRouter.post("/sendforcontract", async (req, res) => {
     res.json({ receipt });
   } catch (error) {
     res.status(500).json({ error: error });
+    console.log(error);
   }
 });
 
@@ -45,6 +46,7 @@ txRouter.post("/sendforprice", async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ error: error });
+    console.log(error);
   }
 });
 

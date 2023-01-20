@@ -27,6 +27,7 @@ stationRouter.get("/list", async (req, res) => {
         lng: station.lng,
         total_slots: station.total_slots,
         pricing: station.pricing,
+        wallet: station.wallet_addr,
       };
     });
     res.send(stationsList);

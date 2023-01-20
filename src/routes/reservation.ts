@@ -113,6 +113,7 @@ reservationRouter.get("/byuseraddress/:address", async (req, res) => {
     }
   } catch (error) {
     res.status(500).json(error);
+    console.log(error);
   }
 });
 
@@ -134,6 +135,7 @@ reservationRouter.get("/bystationaddress/:stationaddress", async (req, res) => {
     }
   } catch (error) {
     res.status(500).json(error);
+    console.log(error);
   }
 });
 
@@ -159,6 +161,7 @@ reservationRouter.get("/bystationid/:stationid", async (req, res) => {
       }
     } catch (error) {
       res.status(500).json(error);
+      console.log(error);
     }
   }
 });
@@ -175,6 +178,7 @@ reservationRouter.get("/all", async (req, res) => {
     res.json(reservations);
   } catch (error) {
     res.status(500).json(error);
+    console.log(error);
   }
 });
 
