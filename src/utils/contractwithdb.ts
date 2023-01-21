@@ -95,6 +95,8 @@ export const newReservationToDB = async (event: any) => {
               id: createdres.id,
             },
           },
+          total_spent: user.total_spent + tempPrice,
+          total_reservation: user.total_reservation + 1,
         },
       });
       const updatedStation = await prisma.station.update({
@@ -232,6 +234,25 @@ export const reservationCancelToDB = async (event: any) => {
         data: {
           status: statusResCancelled,
           cancel_tx: receipt.transactionHash,
+        },
+      });
+
+      //update user reservation calcelled count
+      const user = await prisma.user.findUnique({
+        where: {
+          wallet_addr: reservation.reserver_wallet_addr,
+        },
+      });
+      if (!user) {
+        console.log("user not found");
+        return;
+      }
+      const updatedUser = await prisma.user.update({
+        where: {
+          wallet_addr: reservation.reserver_wallet_addr,
+        },
+        data: {
+          total_cancelled: user.total_cancelled + 1,
         },
       });
 

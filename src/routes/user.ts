@@ -1,7 +1,11 @@
 import { PrismaClient } from "@prisma/client";
 import express from "express";
 import Web3 from "web3";
-import { userRegisterMessage } from "../datas/constants";
+import {
+  statusResCancelled,
+  statusResCompleted,
+  userRegisterMessage,
+} from "../datas/constants";
 
 const userRouter = express.Router();
 const prisma = new PrismaClient();
@@ -53,6 +57,28 @@ userRouter.post("/register", async (req, res) => {
         wallet_addr: address,
       },
     });
+
+    const reservationsOfUser = await prisma.reservation.findMany({
+      where: {
+        reserver_wallet_addr: address,
+      },
+    });
+
+    const totalCancelled = reservationsOfUser.filter(
+      (reservation) => reservation.status == statusResCancelled
+    ).length;
+
+    const totalCompleted = reservationsOfUser.filter(
+      (reservation) => reservation.status == statusResCompleted
+    ).length;
+
+    let totalSpent = 0;
+    reservationsOfUser.forEach((reservation) => {
+      if (reservation.status == statusResCompleted) {
+        totalSpent += reservation.value;
+      }
+    });
+    console.log(totalCancelled, totalCompleted, totalSpent);
 
     if (user) {
       res.json(user);

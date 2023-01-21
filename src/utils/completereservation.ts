@@ -61,6 +61,29 @@ export const completeReservation = async (reshash: string) => {
           complete_tx: receipt.transactionHash,
         },
       });
+
+      //update user reservation completed count
+      const user = await prisma.user.findUnique({
+        where: {
+          wallet_addr: reservation.reserver_wallet_addr,
+        },
+      });
+      console.log(user);
+      
+      if (!user) {
+        console.log("user not found");
+        return;
+      }
+      const updatedUser = await prisma.user.update({
+        where: {
+          wallet_addr: reservation.reserver_wallet_addr,
+        },
+        data: {
+          total_completed: user.total_completed + 1,
+        },
+      });
+
+
       return true;
     }
   } catch (error) {
