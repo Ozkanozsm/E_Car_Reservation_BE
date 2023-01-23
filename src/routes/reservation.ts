@@ -1,7 +1,11 @@
 import { PrismaClient } from "@prisma/client";
 import express from "express";
 import Web3 from "web3";
-import { statusResCompleted, statusResCancelled } from "../datas/constants";
+import {
+  statusResCompleted,
+  statusResCancelled,
+  statusResPaid,
+} from "../datas/constants";
 import { completeReservation } from "../utils/completereservation";
 const reservationRouter = express.Router();
 const prisma = new PrismaClient();
@@ -179,6 +183,61 @@ reservationRouter.get("/all", async (req, res) => {
   } catch (error) {
     res.status(500).json(error);
     console.log(error);
+  }
+});
+
+reservationRouter.post("/check", async (req, res) => {
+  const { stationId, starttime, duration } = req.body;
+  const intid = parseInt(stationId);
+  const newResStartTime = parseInt(starttime);
+  const newResDuration = parseInt(duration);
+  const newResEndTime = newResStartTime + newResDuration;
+
+  if (isNaN(intid)) {
+    res.status(500).json({ error: `id ${stationId} is not a number` });
+  } else {
+    try {
+      const station = await prisma.station.findUnique({
+        where: {
+          id: intid,
+        },
+      });
+      if (station) {
+        const activeReservations = await prisma.reservation.findMany({
+          where: {
+            reserved_wallet_addr: station.wallet_addr,
+            status: statusResPaid,
+          },
+        });
+        let intersectionCounter = 0;
+
+        for (let i = 0; i < activeReservations.length; i++) {
+          const reservation = activeReservations[i];
+          const reservationStart = reservation.start_time;
+          const reservationEnd = reservation.start_time + reservation.duration;
+          if (
+            newResEndTime <= reservationStart ||
+            newResStartTime >= reservationEnd
+          ) {
+            //no intersection
+          } else {
+            intersectionCounter++;
+          }
+        }
+
+        if (intersectionCounter >= station.total_slots) {
+          res.json({ available: false });
+          return;
+        }
+        res.json({ available: true });
+      } else {
+        res.status(500).json({ error: "station not found" });
+        return;
+      }
+    } catch (error) {
+      res.status(500).json(error);
+      console.log(error);
+    }
   }
 });
 
