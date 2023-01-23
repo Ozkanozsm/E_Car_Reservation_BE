@@ -187,9 +187,9 @@ reservationRouter.get("/all", async (req, res) => {
 });
 
 reservationRouter.post("/check", async (req, res) => {
-  const { stationId, starttime, duration } = req.body;
+  const { stationId, startDate, duration } = req.body;
   const intid = parseInt(stationId);
-  const newResStartTime = parseInt(starttime);
+  const newResStartTime = parseInt(startDate);
   const newResDuration = parseInt(duration);
   const newResEndTime = newResStartTime + newResDuration;
 
@@ -215,6 +215,9 @@ reservationRouter.post("/check", async (req, res) => {
           const reservation = activeReservations[i];
           const reservationStart = reservation.start_time;
           const reservationEnd = reservation.start_time + reservation.duration;
+          console.log(reservationStart, reservationEnd);
+          console.log(newResStartTime, newResEndTime);
+
           if (
             newResEndTime <= reservationStart ||
             newResStartTime >= reservationEnd
@@ -224,6 +227,7 @@ reservationRouter.post("/check", async (req, res) => {
             intersectionCounter++;
           }
         }
+        console.log(intersectionCounter);
 
         if (intersectionCounter >= station.total_slots) {
           res.json({ available: false });
