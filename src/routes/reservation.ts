@@ -197,9 +197,18 @@ reservationRouter.post("/check", async (req, res) => {
     res.status(500).json({ error: `id ${stationId} is not a number` });
   } else {
     try {
+      //check if startDate is in the future
+      const now = Math.floor(Date.now() / 1000);
+      if (newResStartTime < now) {
+        res.json({ message: "start date is in the past", available: 0 });
+        return;
+      }
       const station = await prisma.station.findUnique({
         where: {
           id: intid,
+        },
+        include: {
+          pricing: true,
         },
       });
       if (station) {
@@ -230,10 +239,27 @@ reservationRouter.post("/check", async (req, res) => {
         console.log(intersectionCounter);
 
         if (intersectionCounter >= station.total_slots) {
-          res.json({ available: false });
+          res.json({ available: 0, message: "no available slots" });
           return;
+        } else {
+          //calculate estimated price
+          const pricing1 = station.pricing[0];
+          const pricing2 = station.pricing[1];
+          const starthour = new Date(newResStartTime * 1000).getHours();
+          console.log("starthour:", starthour);
+          const durationInMinutes = newResDuration / 60;
+          let tempPrice;
+          if (starthour >= pricing1.start && starthour < pricing1.end) {
+            console.log("pricing1");
+            tempPrice = (durationInMinutes / 60) * pricing1.price;
+          } else {
+            console.log("pricing2");
+            tempPrice = (durationInMinutes / 60) * pricing2.price;
+          }
+          console.log("price:", tempPrice);
+
+          res.json({ available: 1, price: tempPrice });
         }
-        res.json({ available: true });
       } else {
         res.status(500).json({ error: "station not found" });
         return;
