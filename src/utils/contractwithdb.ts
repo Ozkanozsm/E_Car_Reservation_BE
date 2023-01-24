@@ -106,6 +106,7 @@ export const newReservationToDB = async (event: any) => {
               id: createdres.id,
             },
           },
+          total_reserved: station.total_reserved + 1,
         },
       });
       console.log("new reservation created");
@@ -240,6 +241,25 @@ export const reservationCancelToDB = async (event: any) => {
         },
         data: {
           total_cancelled: user.total_cancelled + 1,
+        },
+      });
+
+      const station = await prisma.station.findUnique({
+        where: {
+          wallet_addr: reservation.reserved_wallet_addr,
+        },
+      });
+      if (!station) {
+        console.log("station not found");
+        return;
+      }
+
+      const updatedStation = await prisma.station.update({
+        where: {
+          wallet_addr: reservation.reserved_wallet_addr,
+        },
+        data: {
+          total_cancelled: station.total_cancelled + 1,
         },
       });
 

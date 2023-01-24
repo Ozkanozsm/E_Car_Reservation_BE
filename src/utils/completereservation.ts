@@ -76,6 +76,25 @@ export const completeReservation = async (reshash: string) => {
         },
       });
 
+      const station = await prisma.station.findUnique({
+        where: {
+          wallet_addr: reservation.reserved_wallet_addr,
+        },
+      });
+      if (!station) {
+        console.log("station not found");
+        return;
+      }
+      const updatedStation = await prisma.station.update({
+        where: {
+          wallet_addr: reservation.reserved_wallet_addr,
+        },
+        data: {
+          total_completed: station.total_completed + 1,
+          total_earned: station.total_earned + reservation.value,
+        },
+      });
+
       return true;
     }
   } catch (error) {
