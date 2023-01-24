@@ -235,4 +235,37 @@ stationRouter.post("/changeprice", async (req, res) => {
   }
 });
 
+stationRouter.post("/info", async (req, res) => {
+  const { address } = req.body;
+
+  try {
+    const station = await prisma.station.findUnique({
+      where: {
+        wallet_addr: address,
+      },
+      include: {
+        pricing: true,
+      },
+    });
+    if (station) {
+      const stationInfo = {
+        name: station.name,
+        address: station.address,
+        lat: station.lat,
+        lng: station.lng,
+        total_slots: station.total_slots,
+        pricing: station.pricing,
+      };
+      console.log(stationInfo);
+
+      res.json({ stationInfo });
+    } else {
+      res.status(400).json({ message: "station not found" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Error on creating station" });
+  }
+});
+
 export default stationRouter;
