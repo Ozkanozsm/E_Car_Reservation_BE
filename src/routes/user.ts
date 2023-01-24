@@ -58,28 +58,6 @@ userRouter.post("/register", async (req, res) => {
       },
     });
 
-    const reservationsOfUser = await prisma.reservation.findMany({
-      where: {
-        reserver_wallet_addr: address,
-      },
-    });
-
-    const totalCancelled = reservationsOfUser.filter(
-      (reservation) => reservation.status == statusResCancelled
-    ).length;
-
-    const totalCompleted = reservationsOfUser.filter(
-      (reservation) => reservation.status == statusResCompleted
-    ).length;
-
-    let totalSpent = 0;
-    reservationsOfUser.forEach((reservation) => {
-      if (reservation.status == statusResCompleted) {
-        totalSpent += reservation.value;
-      }
-    });
-    console.log(totalCancelled, totalCompleted, totalSpent);
-
     if (user) {
       res.json(user);
     } else {
