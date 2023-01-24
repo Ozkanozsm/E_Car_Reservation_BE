@@ -11,6 +11,7 @@ txRouter.get("/", (req, res) => {
   res.send("transaction router");
 });
 
+//blockchaine rezervasyon kontraktını çağırmak için oluşturulan tx'i gönderir
 txRouter.post("/sendforcontract", async (req, res) => {
   const { signedTx } = req.body;
   console.log(signedTx);
@@ -27,6 +28,7 @@ txRouter.post("/sendforcontract", async (req, res) => {
   }
 });
 
+//blockchaine rezervasyon ücreti için oluşturulan tx'i gönderir
 txRouter.post("/sendforprice", async (req, res) => {
   const { signedTx } = req.body;
   try {
@@ -50,6 +52,7 @@ txRouter.post("/sendforprice", async (req, res) => {
   }
 });
 
+//oluşturulacak transaction için gereken bilgileri döndürür
 txRouter.post("/required", async (req, res) => {
   const { address, tx } = req.body;
 
@@ -65,6 +68,7 @@ txRouter.post("/required", async (req, res) => {
   }
 });
 
+//nonce değerini döndürür
 txRouter.post("/nonce", async (req, res) => {
   const { address } = req.body;
   try {

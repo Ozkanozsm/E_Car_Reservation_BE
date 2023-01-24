@@ -11,14 +11,13 @@ const escrowpkey = process.env.ESCROW_PKEY as string;
 export const completeReservation = async (reshash: string) => {
   try {
     const web3 = new Web3(web3Url);
-    //find reservation
+
     const reservation = await prisma.reservation.findUnique({
       where: { create_tx: reshash },
     });
     console.log(reservation);
 
     if (reservation) {
-      //send transaction to complete reservation
       const txFrom = web3.eth.accounts.privateKeyToAccount(escrowpkey).address;
       const txTo = reservation.reserved_wallet_addr;
       const txValue = Number(
@@ -27,7 +26,6 @@ export const completeReservation = async (reshash: string) => {
       const txData = web3.utils.toHex(reshash);
       let txGas = 0;
 
-      //first estimate gas
       const gas = await web3.eth.estimateGas({
         from: txFrom,
         to: txTo,
@@ -36,7 +34,6 @@ export const completeReservation = async (reshash: string) => {
       });
       console.log(gas);
       txGas = gas;
-      //then sign transaction
       const signedTx = (await web3.eth.accounts.signTransaction(
         {
           from: txFrom,
@@ -48,12 +45,9 @@ export const completeReservation = async (reshash: string) => {
         escrowpkey
       )) as any;
 
-      //then send transaction
       const receipt = await web3.eth.sendSignedTransaction(
         signedTx.rawTransaction
       );
-      //console.log(receipt);
-      //update reservation status
       await prisma.reservation.update({
         where: { create_tx: reshash },
         data: {
@@ -62,14 +56,13 @@ export const completeReservation = async (reshash: string) => {
         },
       });
 
-      //update user reservation completed count
       const user = await prisma.user.findUnique({
         where: {
           wallet_addr: reservation.reserver_wallet_addr,
         },
       });
       console.log(user);
-      
+
       if (!user) {
         console.log("user not found");
         return;
@@ -82,7 +75,6 @@ export const completeReservation = async (reshash: string) => {
           total_completed: user.total_completed + 1,
         },
       });
-
 
       return true;
     }

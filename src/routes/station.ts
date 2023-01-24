@@ -53,7 +53,7 @@ stationRouter.get("/list/:id", async (req, res) => {
   }
 });
 
-//TODO check if station tries to register without necessary data
+//istasyon kaydı yapar
 stationRouter.post("/register", async (req, res) => {
   const {
     wallet_address,
@@ -120,6 +120,7 @@ stationRouter.post("/register", async (req, res) => {
   }
 });
 
+//istasyonun fiyatlarını listeler
 stationRouter.get("/prices", async (req, res) => {
   const { id } = req.body;
 
@@ -145,6 +146,7 @@ stationRouter.get("/prices", async (req, res) => {
   }
 });
 
+//istasyon arama
 stationRouter.post("/search", async (req, res) => {
   const { search } = req.body;
   console.log(search);
@@ -176,6 +178,7 @@ stationRouter.post("/search", async (req, res) => {
   }
 });
 
+//istasyon fiyatlarını değiştirir
 stationRouter.post("/changeprice", async (req, res) => {
   const { signature, wallet_address, prices } = req.body;
   console.log(prices);
@@ -235,6 +238,7 @@ stationRouter.post("/changeprice", async (req, res) => {
   }
 });
 
+//istasyon bilgilerini getirir
 stationRouter.post("/info", async (req, res) => {
   const { address } = req.body;
 

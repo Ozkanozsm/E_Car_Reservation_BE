@@ -12,13 +12,11 @@ const escrowpkey = process.env.ESCROW_PKEY as string;
 
 export const newReservationToDB = async (event: any) => {
   const eventdata = event.returnValues.newRes;
-  //starttime is epoch to date and hour
   const starttime = new Date(parseInt(eventdata.startTime) * 1000);
   const startdate = starttime.toLocaleDateString();
   const starthour = starttime.getHours();
   console.log("startdate", startdate);
   console.log("starthour", starthour);
-  //endtime is epoch to date and hour
   const endtime = new Date(parseInt(eventdata.endTime) * 1000);
   const enddate = endtime.toLocaleDateString();
   const endhour = endtime.getHours();
@@ -49,7 +47,6 @@ export const newReservationToDB = async (event: any) => {
         starttime.getFullYear()
       );
 
-      //calculate duration in minutes
       const durationInMinutes =
         (parseInt(eventdata.endTime) - parseInt(eventdata.startTime)) / 60;
       console.log("durationInMinutes", durationInMinutes);
@@ -120,16 +117,13 @@ export const newReservationToDB = async (event: any) => {
 
 export const reservationBillToDB = async (receipt: any) => {
   const txData = await web3.eth.getTransaction(receipt.transactionHash);
-  //console.log(txData);
 
-  //TODO check if price sent to escrow
   if (txData.to !== escrowAddress) {
     console.log("transaction not sent to escrow");
     return -4;
   }
   const txInput = web3.utils.hexToAscii(txData.input);
   try {
-    //find reservation
     const reservation = await prisma.reservation.findUnique({
       where: {
         create_tx: txInput,
@@ -140,7 +134,6 @@ export const reservationBillToDB = async (receipt: any) => {
       console.log("reservation not found");
       return -1;
     }
-    //check if reservation is paid
     if (reservation.status === statusResPaid) {
       console.log("reservation already paid");
       return -2;
@@ -153,7 +146,6 @@ export const reservationBillToDB = async (receipt: any) => {
       console.log("reservation price is not correct");
       return -3;
     }
-    //update reservation status
     await prisma.reservation.update({
       where: {
         create_tx: txInput,
@@ -203,7 +195,6 @@ export const reservationCancelToDB = async (event: any) => {
       const txData = web3.utils.toHex(reservation.create_tx);
       let txGas = 0;
 
-      //first estimate gas
       const gas = await web3.eth.estimateGas({
         from: txFrom,
         to: txTo,
@@ -211,7 +202,6 @@ export const reservationCancelToDB = async (event: any) => {
         data: txData,
       });
       txGas = gas;
-      //then sign transaction
       const signedTx = (await web3.eth.accounts.signTransaction(
         {
           from: txFrom,
@@ -223,11 +213,9 @@ export const reservationCancelToDB = async (event: any) => {
         escrowpkey
       )) as any;
 
-      //then send transaction
       const receipt = await web3.eth.sendSignedTransaction(
         signedTx.rawTransaction
       );
-      //update reservation status
 
       await prisma.reservation.update({
         where: { create_tx: cancelledRes },
@@ -237,7 +225,6 @@ export const reservationCancelToDB = async (event: any) => {
         },
       });
 
-      //update user reservation calcelled count
       const user = await prisma.user.findUnique({
         where: {
           wallet_addr: reservation.reserver_wallet_addr,

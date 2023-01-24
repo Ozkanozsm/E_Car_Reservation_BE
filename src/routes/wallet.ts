@@ -8,6 +8,7 @@ walletRouter.get("/", (req, res) => {
   res.send("wallet router");
 });
 
+//balance gösterir
 walletRouter.post("/balance", async (req, res) => {
   const { address } = req.body;
   try {

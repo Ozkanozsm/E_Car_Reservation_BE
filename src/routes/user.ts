@@ -14,6 +14,7 @@ userRouter.get("/", (req, res) => {
   res.send("user router");
 });
 
+//tüm kullanıcıları listeler
 userRouter.get("/list", async (req, res) => {
   try {
     const users = await prisma.user.findMany();
@@ -41,6 +42,7 @@ userRouter.get("/list/:id", async (req, res) => {
   }
 });
 
+//kullanıcı kayıt işlemi yapar
 userRouter.post("/register", async (req, res) => {
   const { signature, address } = req.body;
   const web3 = new Web3();

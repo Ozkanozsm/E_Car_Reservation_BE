@@ -7,14 +7,17 @@ contractRouter.get("/", (req, res) => {
   res.send("contract router");
 });
 
+//contract abi'sini döndürür
 contractRouter.get("/ABI", (req, res) => {
   res.json(contractAbi);
 });
 
+//contract addressini döndürür
 contractRouter.get("/address", (req, res) => {
   res.send({ contractAddress: contractAddress });
 });
 
+//escrow addressini döndürür
 contractRouter.get("/escrow", (req, res) => {
   res.send({ escrowAddress: escrowAddress });
 });

@@ -186,6 +186,7 @@ reservationRouter.get("/all", async (req, res) => {
   }
 });
 
+//rezervasyon uygun mu kontrol eder
 reservationRouter.post("/check", async (req, res) => {
   const { stationId, startDate, duration } = req.body;
   const intid = parseInt(stationId);
