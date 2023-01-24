@@ -252,14 +252,7 @@ stationRouter.post("/info", async (req, res) => {
       },
     });
     if (station) {
-      const stationInfo = {
-        name: station.name,
-        address: station.address,
-        lat: station.lat,
-        lng: station.lng,
-        total_slots: station.total_slots,
-        pricing: station.pricing,
-      };
+      const stationInfo = station;
       console.log(stationInfo);
 
       res.json({ stationInfo });

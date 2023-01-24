@@ -13,7 +13,7 @@ datasource db {
 model User {
   id                Int           @id @unique @default(autoincrement())
   wallet_addr       String        @unique @db.Char(42)
-  total_spent       Int           @default(0)
+  total_spent       Float           @default(0)
   total_reservation Int           @default(0)
   total_cancelled   Int           @default(0)
   total_completed   Int           @default(0)
@@ -47,7 +47,7 @@ model Station {
   lng             Float
   total_slots     Int
   pricing         Pricing[]
-  total_earned    Int           @default(0)
+  total_earned    Float           @default(0)
   total_reserved  Int           @default(0)
   total_cancelled Int           @default(0)
   total_completed Int           @default(0)
