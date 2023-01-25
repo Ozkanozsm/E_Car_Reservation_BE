@@ -2,7 +2,7 @@
 CREATE TABLE "User" (
     "id" SERIAL NOT NULL,
     "wallet_addr" CHAR(42) NOT NULL,
-    "total_spent" INTEGER NOT NULL DEFAULT 0,
+    "total_spent" DOUBLE PRECISION NOT NULL DEFAULT 0,
     "total_reservation" INTEGER NOT NULL DEFAULT 0,
     "total_cancelled" INTEGER NOT NULL DEFAULT 0,
     "total_completed" INTEGER NOT NULL DEFAULT 0,
@@ -38,7 +38,7 @@ CREATE TABLE "Station" (
     "lat" DOUBLE PRECISION NOT NULL,
     "lng" DOUBLE PRECISION NOT NULL,
     "total_slots" INTEGER NOT NULL,
-    "total_earned" INTEGER NOT NULL DEFAULT 0,
+    "total_earned" DOUBLE PRECISION NOT NULL DEFAULT 0,
     "total_reserved" INTEGER NOT NULL DEFAULT 0,
     "total_cancelled" INTEGER NOT NULL DEFAULT 0,
     "total_completed" INTEGER NOT NULL DEFAULT 0,

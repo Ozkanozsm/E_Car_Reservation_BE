@@ -1,6 +1,19 @@
-export const contractAddress = "0x5a688FeAF5460E140c13Bc7A12A2ad2505cd878A";
-export const escrowAddress = "0xe4F399b0e2EDe652d964430D8e9a61d001c64A1a";
+export const contractAddress = "0x04d84974134c7f39cC1A1274E376ee24679483d9";
+export const escrowAddress = "0xfA68266912249b437DD2C11cE7A30a6966b52ea4";
 export const contractAbi = [
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "resToCancel",
+        type: "string",
+      },
+    ],
+    name: "cancelReservation",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
   {
     anonymous: false,
     inputs: [
@@ -19,6 +32,29 @@ export const contractAbi = [
     ],
     name: "CancelReservation",
     type: "event",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "station",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "startTime",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "endTime",
+        type: "uint256",
+      },
+    ],
+    name: "makeReservation",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
     anonymous: false,
@@ -54,41 +90,5 @@ export const contractAbi = [
     ],
     name: "NewReservation",
     type: "event",
-  },
-  {
-    inputs: [
-      {
-        internalType: "string",
-        name: "resToCancel",
-        type: "string",
-      },
-    ],
-    name: "cancelReservation",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "station",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "startTime",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "endTime",
-        type: "uint256",
-      },
-    ],
-    name: "makeReservation",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
   },
 ];

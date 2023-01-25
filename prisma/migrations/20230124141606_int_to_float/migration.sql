@@ -1,7 +1,0 @@
--- AlterTable
-ALTER TABLE "Station" ALTER COLUMN "total_earned" SET DEFAULT 0,
-ALTER COLUMN "total_earned" SET DATA TYPE DOUBLE PRECISION;
-
--- AlterTable
-ALTER TABLE "User" ALTER COLUMN "total_spent" SET DEFAULT 0,
-ALTER COLUMN "total_spent" SET DATA TYPE DOUBLE PRECISION;
